@@ -28,8 +28,8 @@ $tdest = Join-Path $dest "templates"
 if (-not (Test-Path $tdest)) { New-Item -ItemType Directory -Path $tdest | Out-Null }
 Copy-Item (Join-Path $src "templates\*") $tdest -Force
 Copy-Item (Join-Path $src "new-project.ps1") (Join-Path $dest "new-project.ps1") -Force
-Copy-Item (Join-Path $src "WORKFLOW.md") (Join-Path $dest "WORKFLOW.md") -Force
-Write-Host "  OK  템플릿 + new-project.ps1 + WORKFLOW.md  ->  ~/.claude/" -ForegroundColor Green
+Write-Host "  OK  템플릿 + new-project.ps1  ->  ~/.claude/" -ForegroundColor Green
+Write-Host "  (가이드 WORKFLOW.md 는 레포/GitHub 에서 읽으세요 - ~/.claude 는 안 건드림)" -ForegroundColor DarkGray
 
 # 3) 짧은 명령 등록: 모든 호스트 공통 프로필(AllHosts)에 new-project 함수 추가
 try {
