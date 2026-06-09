@@ -29,7 +29,16 @@ if (-not (Test-Path $tdest)) { New-Item -ItemType Directory -Path $tdest | Out-N
 Copy-Item (Join-Path $src "templates\*") $tdest -Force
 Copy-Item (Join-Path $src "new-project.ps1") (Join-Path $dest "new-project.ps1") -Force
 Write-Host "  OK  템플릿 + new-project.ps1  ->  ~/.claude/" -ForegroundColor Green
-Write-Host "  (가이드 WORKFLOW.md 는 레포/GitHub 에서 읽으세요 - ~/.claude 는 안 건드림)" -ForegroundColor DarkGray
+
+# 전역 작업 규율 CLAUDE.md - 없을 때만 설치(기존 것은 절대 안 덮음)
+$gclaude = Join-Path $dest "CLAUDE.md"
+if (Test-Path $gclaude) {
+  Write-Host "  --  ~/.claude/CLAUDE.md 이미 있음  ->  그대로 둠(안 덮음)" -ForegroundColor DarkGray
+} else {
+  Copy-Item (Join-Path $src "CLAUDE.global.md") $gclaude -Force
+  Write-Host "  OK  전역 작업 규율  ->  ~/.claude/CLAUDE.md (신규 설치)" -ForegroundColor Green
+}
+Write-Host "  (가이드 WORKFLOW.md 는 레포/GitHub 에서 읽으세요)" -ForegroundColor DarkGray
 
 # 3) 짧은 명령 등록: 모든 호스트 공통 프로필(AllHosts)에 new-project 함수 추가
 try {
