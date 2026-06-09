@@ -31,16 +31,20 @@ Copy-Item (Join-Path $src "new-project.ps1") (Join-Path $dest "new-project.ps1")
 Copy-Item (Join-Path $src "WORKFLOW.md") (Join-Path $dest "WORKFLOW.md") -Force
 Write-Host "  OK  템플릿 + new-project.ps1 + WORKFLOW.md  ->  ~/.claude/" -ForegroundColor Green
 
-# 3) 짧은 명령 등록: PowerShell 프로필에 new-project 함수 추가(이미 있으면 건너뜀)
+# 3) 짧은 명령 등록: 모든 호스트 공통 프로필(AllHosts)에 new-project 함수 추가
 try {
-  if (-not (Test-Path $PROFILE)) { New-Item -ItemType File -Path $PROFILE -Force | Out-Null }
-  $cur = Get-Content $PROFILE -Raw -ErrorAction SilentlyContinue
+  $prof = $PROFILE.CurrentUserAllHosts
+  $pdir = Split-Path $prof -Parent
+  if (-not (Test-Path $pdir)) { New-Item -ItemType Directory -Path $pdir -Force | Out-Null }
+  $cur = if (Test-Path $prof) { Get-Content $prof -Raw } else { "" }
   if ($cur -notlike "*function new-project*") {
-    Add-Content -Path $PROFILE -Value "`r`nfunction new-project { & `"`$env:USERPROFILE\.claude\new-project.ps1`" @args }`r`n"
-    Write-Host "  OK  'new-project' 명령 등록(프로필) - 새 PowerShell 창부터 사용 가능" -ForegroundColor Green
+    Add-Content -Path $prof -Value "`r`nfunction new-project { & `"`$env:USERPROFILE\.claude\new-project.ps1`" @args }`r`n"
+    Write-Host "  OK  'new-project' 단축명령 등록 - 새 PowerShell 창부터 사용 가능" -ForegroundColor Green
+  } else {
+    Write-Host "  OK  'new-project' 단축명령 이미 등록됨" -ForegroundColor Green
   }
 } catch {
-  Write-Host "  (i) 프로필 등록 건너뜀 - 아래 전체 명령으로 쓰면 됩니다." -ForegroundColor DarkYellow
+  Write-Host "  (i) 단축명령 자동등록 실패 - 아래 전체 명령으로 쓰면 됩니다." -ForegroundColor DarkYellow
 }
 
 # 4) 정리 + 안내
